@@ -3,6 +3,8 @@ package main
 import (
 	"embed"
 
+	"github.com/joho/godotenv"
+	"github.com/templari/shire-client/util"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/mac"
@@ -36,6 +38,10 @@ func main() {
 			WebviewIsTransparent: true,
 		},
 	})
+
+	if err := godotenv.Load(); err != nil {
+		util.Logger.Fatal("Error loading .env file")
+	}
 
 	if err != nil {
 		println("Error:", err.Error())
