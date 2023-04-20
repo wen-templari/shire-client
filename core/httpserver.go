@@ -39,7 +39,7 @@ func (s *HttpServer) Start() {
 		if err := s.core.ReceiveMessage(message); err != nil {
 			return err
 		}
-		return c.JSON(http.StatusCreated, message)
+		return c.JSON(http.StatusOK, message)
 	})
 
 	e.Logger.Fatal(e.Start(""))
