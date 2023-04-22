@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/templari/shire-client/model"
@@ -13,6 +14,7 @@ func (c *Core) ReceiveMessage(message model.Message) error {
 	//TODO not implemented
 	// save message to db ??
 	// notify watchers
+	log.Printf("Received message: %v", message)
 	for _, ch := range c.subscribers {
 		ch <- message
 	}
@@ -20,7 +22,7 @@ func (c *Core) ReceiveMessage(message model.Message) error {
 }
 
 func (c *Core) SendMessage(message model.Message) error {
-	if message.GroupId == 0 {
+	if message.GroupId <= 0 {
 		return c.sendOneToOneMessage(message)
 	} else {
 		return c.sendGroupMessage(message)

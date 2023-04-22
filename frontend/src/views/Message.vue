@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { Ping, ReceiveMessage } from "../../wailsjs/go/main/App"
+import { Ping, ReceiveMessage, SendMessage } from "../../wailsjs/go/main/App"
 import BaseLayout from "../layout/BaseLayout.vue"
 import { useMessageStore } from "../store/message"
 import { userAccountStore } from "../store/account"
-import { onMounted,ref } from "vue"
+import { onMounted, ref } from "vue"
 import { EventsOn } from "../../wailsjs/runtime/runtime"
 import { model } from "../../wailsjs/go/models"
 
@@ -14,22 +14,21 @@ const onButtonClick = () => {
 const userStore = userAccountStore()
 const messageStore = useMessageStore()
 
-
 const input = ref("")
 
 const sendMessage = () => {
   if (input.value == "") {
     return
   }
-  const message:model.Message = {
+  const message: model.Message = {
     from: userStore.user?.id as number,
     to: messageStore.receiver?.id as number,
     content: input.value,
     time: new Date().toISOString(),
-    groupId: -1
+    groupId: -1,
   }
-  ReceiveMessage(message)
-  // SendMessage(message)
+  // ReceiveMessage(message)
+  SendMessage(message)
   input.value = ""
 }
 
@@ -46,10 +45,10 @@ onMounted(() => {
   console.log(messageStore.currentMessageList)
 })
 
+
 EventsOn("onMessage", (data: model.Message) => {
   console.log(data)
 })
-
 </script>
 
 <template>
@@ -58,7 +57,21 @@ EventsOn("onMessage", (data: model.Message) => {
       <input class="w-full rounded-[6px] bg-borderGrey-light h-[30px] text-sm px-3" type="text" />
     </template>
     <template #side-body>
-      <button @click="onButtonClick">click</button>
+      <div class="flex flex-col justify-between h-full">
+        <button @click="onButtonClick">click</button>
+        <div class="flex-shrink-0 flex items-end justify-between pb-3 px-4">
+          <div class="flex items-end p-1">
+            <span class="font-semibold ml-1">{{ userStore.user?.name }}</span>
+            <span class="ml-1 textDescription text-labelColor-light-secondary">({{ userStore.user?.id }})</span>
+          </div>
+          <button
+            class="text-center text-sm font-semibold rounded bg-fillColor-light-teritary text-sm text-labelColor-light-secondary px-1 p-0.5 mb-0.5 hover:(bg-gray-400/40 )"
+            @click="userStore.logout"
+          >
+            登出
+          </button>
+        </div>
+      </div>
     </template>
     <template #main>
       <div class="h-14 bg-fillColor-light-teritary opacity-60 flex items-center justify-center">{{ messageStore.receiver?.name }}</div>

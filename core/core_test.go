@@ -23,6 +23,18 @@ func TestCoreLogin(t *testing.T) {
 	}
 }
 
+func TestStartBobServer(t *testing.T) {
+	bob := core.MakeCore(infoServerAddr)
+
+	if _, err := bob.Login(7, "12345"); err != nil {
+		t.Error(err)
+	}
+
+	for {
+	}
+
+}
+
 func TestSendMessage(t *testing.T) {
 	bob := core.MakeCore(infoServerAddr)
 

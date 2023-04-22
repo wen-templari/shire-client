@@ -4,11 +4,11 @@ import (
 	"github.com/templari/shire-client/model"
 )
 
-func (a *App) Register(name string, password string) (model.User, error) {
+func (a *App) Register(name string, password string) (model.User , error) {
 	return a.core.Register(name, password)
 }
 
-func (a *App) Login(id int, password string) (model.User, error) {
+func (a *App) Login(id int, password string) (model.User , error) {
 	return a.core.Login(id, password)
 }
 

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -46,11 +47,11 @@ func (c *Core) Register(name string, password string) (model.User, error) {
 	c.token = rep.Token
 
 	listener, _ := util.CreateListener()
+	log.Printf("Login as %v,listening at %v", c.user.Name, listener.Addr().String())
 	go StartHttpServer(c, listener)
 	res := strings.Split(listener.Addr().String(), ":")
 	port, _ := strconv.Atoi(res[len(res)-1])
-	c.UpdateUser(port)
-	return rep.User, nil
+	return c.UpdateUser(port)
 }
 
 func (c *Core) Login(id int, password string) (model.User, error) {
@@ -77,11 +78,11 @@ func (c *Core) Login(id int, password string) (model.User, error) {
 	c.user = rep.User
 	c.token = rep.Token
 	listener, _ := util.CreateListener()
+	log.Printf("Login as %v,listening at %v", c.user.Name, listener.Addr().String())
 	go StartHttpServer(c, listener)
 	res := strings.Split(listener.Addr().String(), ":")
 	port, _ := strconv.Atoi(res[len(res)-1])
-	c.UpdateUser(port)
-	return rep.User, nil
+	return c.UpdateUser(port)
 }
 
 func (c *Core) UpdateUser(port int) (model.User, error) {

@@ -12,6 +12,7 @@ func (a App) Ping() string {
 }
 
 func (a *App) SendMessage(message model.Message) error {
+	log.Printf("Sending message: %v", message)
 	return a.core.SendMessage(message)
 }
 

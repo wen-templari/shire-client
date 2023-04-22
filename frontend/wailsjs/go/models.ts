@@ -1,10 +1,10 @@
 export namespace model {
 	
 	export class User {
-	    id: number;
-	    name: string;
-	    address: string;
-	    port: number;
+	    id?: number;
+	    name?: string;
+	    address?: string;
+	    port?: number;
 	    password?: string;
 	    createdAt?: string;
 	    updatedAt?: string;

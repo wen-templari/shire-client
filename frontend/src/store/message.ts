@@ -22,22 +22,22 @@ export const useMessageStore = defineStore("counter", () => {
 
   const mock = () => {
     receiver.value = {
-      id: 2,
+      id: 7,
       name: "bob",
       address: "addr",
       port: 1234,
     }
 
-    messageList.value.set(2, [
+    messageList.value.set(7, [
       {
         from: 1,
-        to: 2,
+        to: 7,
         content: "hello",
         time: "123",
         groupId: -1,
       },
       {
-        from: 2,
+        from: 7,
         to: 1,
         content: "hello again",
         time: "123",
