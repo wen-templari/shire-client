@@ -1,6 +1,13 @@
 {
   "cSpell.words": [
+    "endnames",
+    "kvraft",
+    "labgob",
     "labstack",
+    "maxraftstate",
+    "myname",
+    "prevlog",
+    "raftstate",
     "sqlx",
     "wailsjs"
   ]

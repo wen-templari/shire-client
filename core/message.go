@@ -20,7 +20,14 @@ func (c *Core) ReceiveMessage(message model.Message) error {
 }
 
 func (c *Core) SendMessage(message model.Message) error {
-	//TODO not implemented
+	if message.GroupId != 0 {
+		return c.sendOneToOneMessage(message)
+	} else {
+		return c.sendGroupMessage(message)
+	}
+}
+
+func (c *Core) sendOneToOneMessage(message model.Message) error {
 	// find message.to's address
 	receiver, err := c.GetUserById(message.To)
 	if err != nil {
@@ -53,6 +60,11 @@ func (c *Core) SendMessage(message model.Message) error {
 	for _, ch := range c.subscribers {
 		ch <- message
 	}
+	return nil
+}
+
+func (c *Core) sendGroupMessage(message model.Message) error {
+	// TODO not implemented
 	return nil
 }
 

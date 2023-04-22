@@ -1,7 +1,11 @@
 package util
 
 import (
+	"bytes"
+	"encoding/json"
+	"io"
 	"net"
+	"net/http"
 	"os"
 )
 
@@ -26,4 +30,33 @@ func CreateListener() (l net.Listener, close func()) {
 	return l, func() {
 		_ = l.Close()
 	}
+}
+
+func MakeHttpRequest[T any](method string, url string, data interface{}, returnValue T) error {
+	var body io.Reader = nil
+	if data != nil {
+		bytesData, err := json.Marshal(data)
+		if err != nil {
+			return err
+		}
+		body = bytes.NewReader(bytesData)
+	}
+	req, _ := http.NewRequest(method, url, body)
+	if body != nil {
+		req.Header.Add("Content-Type", "application/json")
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil
+	}
+	responseBody, _ := io.ReadAll(resp.Body)
+	if err = json.Unmarshal(responseBody, &returnValue); err != nil {
+		return err
+	}
+	return nil
 }
