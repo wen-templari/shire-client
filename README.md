@@ -28,7 +28,7 @@ All message transimit is handled by the package `github.com/templari/shire-clien
 #### One to one
 Assume a user called Alice want to send message to Bob.
 1. Alice will fetch user list from info server.
-    ```json
+    ```
     GET {{info_server}}/users
     ```
 
@@ -66,10 +66,10 @@ Assume a user called Alice want to have a group another 2 members, Bob and Charl
 1. Alice will fetch user list from info server. Detail see [One to one](#one-to-one)
 
 
-2. Alice will send a request to info server with members' id which alice wish to have in the group.
+2. Alice will send a request to info server with members' id which Alice wish to have in the group.
 
     ```json
-    POST {{info_server}}/group
+    // POST {{info_server}}/group
     [
       {
         "userId": {{alice.id}},
@@ -78,16 +78,16 @@ Assume a user called Alice want to have a group another 2 members, Bob and Charl
         "userId": {{bob.id}},
       },
       {
-        "userId": {{charlie.id}}},
+        "userId": {{charlie.id}},
       }
     ]
     ```
    The response will contains a unqiue group id.
    ```json
    {
-     "groupUsers": [
-       //users...
-     ],
+
+      //users...
+     "groupUsers": [],
      "id": {{groupId}},
      "createdAt": "2023-04-22T04:27:35.001Z",
      "updatedAt": "2023-04-22T04:27:35.001Z"
@@ -99,7 +99,7 @@ Assume a user called Alice want to have a group another 2 members, Bob and Charl
     3.1 Alice will make http post request to each members of the group to ask them to prepare their raft and set up RPC service
 
     ```json
-    POST {{user.address}}:{{user.port}}/group
+    // POST {{user.address}}:{{user.port}}/group
     {
       "groupId": {{groupId}}
     }
@@ -124,7 +124,7 @@ Assume a user called Alice want to have a group another 2 members, Bob and Charl
 
 
     ```json
-    POST {{user.address}}:{{user.port}}/group/start
+    // POST {{user.address}}:{{user.port}}/group/start
     {
       "groupId": {{groupId}}
     }
