@@ -26,7 +26,9 @@ TODO
 All message transimit is handled by the package `github.com/templari/shire-client/core`. The message handling process is mainly done by `Core.SendMessage` and `Core.ReceiveMessage`, `Core.Subscribe` is provided for subscirbing to all messages goes through the package.
 
 #### One to one
+
 Assume a user called Alice want to send message to Bob.
+
 1. Alice will fetch user list from info server.
     ```
     GET {{info_server}}/users
@@ -34,7 +36,7 @@ Assume a user called Alice want to send message to Bob.
 
     The response will contains a list of users.
 
-    ```json
+    ```
     [
       {
         "id": 1,
@@ -44,18 +46,21 @@ Assume a user called Alice want to send message to Bob.
         "createdAt": "2023-04-21T14:10:06.235Z",
         "updatedAt": "2023-04-21T14:10:06.256Z"
       },
-      ...
+      // ...
     ]
     ```
+
 2. Alice will then make a http post request to Bob
-   ```json
+   ```
    POST {{user.address}}:{{user.port}}/message
+
    {
      "from": {{alice.id}},
      "to": {{bob.id}},
      "content": "Hello Bob"
    }
    ```
+
 3. After Bob received the request, Bob will then response to Alice with a OK status code. Then both Alice and Bob will pass the message to all subscirbers.
    
 
@@ -68,8 +73,9 @@ Assume a user called Alice want to have a group another 2 members, Bob and Charl
 
 2. Alice will send a request to info server with members' id which Alice wish to have in the group.
 
-    ```json
-    // POST {{info_server}}/group
+    ```
+    POST {{info_server}}/group
+
     [
       {
         "userId": {{alice.id}},
@@ -83,11 +89,11 @@ Assume a user called Alice want to have a group another 2 members, Bob and Charl
     ]
     ```
    The response will contains a unqiue group id.
-   ```json
+   ```
    {
-
-      //users...
-     "groupUsers": [],
+     "groupUsers": [
+     //users...
+     ],
      "id": {{groupId}},
      "createdAt": "2023-04-22T04:27:35.001Z",
      "updatedAt": "2023-04-22T04:27:35.001Z"
@@ -98,22 +104,24 @@ Assume a user called Alice want to have a group another 2 members, Bob and Charl
     
     3.1 Alice will make http post request to each members of the group to ask them to prepare their raft and set up RPC service
 
-    ```json
-    // POST {{user.address}}:{{user.port}}/group
+    ```
+    POST {{user.address}}:{{user.port}}/group
+
     {
       "groupId": {{groupId}}
     }
     ```
+
     3.2 When a member received the request, say Bob, Bob will then register and serve RPC service.
       
     ```go
      // todo 
     ```
+
     3.3 After Bob has started the service and begin to listen. Bob will make a http put request to info server to update the group info. Then bob will response to Alice's call with a success message.
 
-    ```json
-     PUT {{info_server}}/groups/{{groupId}}/users/{{userId}} HTTP/1.1
-     Content-Type: application/json
+    ```
+    PUT {{info_server}}/groups/{{groupId}}/users/{{userId}} 
 
      {
          "userPort": {{port}}
@@ -123,8 +131,9 @@ Assume a user called Alice want to have a group another 2 members, Bob and Charl
     3.4 When Alice received success message from all members, Alice will and send a message to each member to start the raft.
 
 
-    ```json
-    // POST {{user.address}}:{{user.port}}/group/start
+    ```
+    POST {{user.address}}:{{user.port}}/group/start
+
     {
       "groupId": {{groupId}}
     }
