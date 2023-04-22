@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/templari/shire-client/core/model"
+	"github.com/templari/shire-client/model"
 )
 
 func (c *Core) ReceiveMessage(message model.Message) error {
@@ -20,7 +20,7 @@ func (c *Core) ReceiveMessage(message model.Message) error {
 }
 
 func (c *Core) SendMessage(message model.Message) error {
-	if message.GroupId != 0 {
+	if message.GroupId == 0 {
 		return c.sendOneToOneMessage(message)
 	} else {
 		return c.sendGroupMessage(message)

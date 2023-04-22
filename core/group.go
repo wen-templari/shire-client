@@ -12,7 +12,7 @@ func (c *Core) CreateGroup(idList []int) error {
 	return nil
 }
 
-func (c *Core) startGroup(id int) error {
+func (c *Core) StartGroup(id int) error {
 	// fetch group users
 	// start raft node
 	return nil

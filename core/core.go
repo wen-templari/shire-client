@@ -1,23 +1,23 @@
 package core
 
 import (
-	"github.com/jmoiron/sqlx"
-	"github.com/templari/shire-client/core/model"
+	"github.com/templari/shire-client/model"
 )
 
 type Core struct {
 	InfoServerAddress string
-	db                *sqlx.DB
 	user              model.User
 	token             string
 	subscribers       []chan model.Message
 }
 
-func MakeCore(address string, db *sqlx.DB) *Core {
+func MakeCore(address string) *Core {
 	return &Core{
 		InfoServerAddress: address,
-		db:                db,
 		subscribers:       make([]chan model.Message, 0),
 	}
 }
 
+func (c *Core) Ping() string {
+	return "pong"
+}

@@ -10,11 +10,13 @@ import (
 	"testing"
 
 	"github.com/templari/shire-client/core"
-	"github.com/templari/shire-client/core/model"
+	"github.com/templari/shire-client/model"
 )
 
+var infoServerAddr = "http://localhost:3011"
+
 func TestCoreLogin(t *testing.T) {
-	core := core.MakeCore("http://localhost:3011", nil)
+	core := core.MakeCore(infoServerAddr)
 	_, err := core.Login(1, "12346")
 	if err != nil {
 		t.Error(err)
@@ -22,7 +24,7 @@ func TestCoreLogin(t *testing.T) {
 }
 
 func TestSendMessage(t *testing.T) {
-	bob := core.MakeCore("http://localhost:3011", nil)
+	bob := core.MakeCore(infoServerAddr)
 
 	if _, err := bob.Register("bob", "12345"); err != nil {
 		t.Error(err)
@@ -38,8 +40,8 @@ func TestSendMessage(t *testing.T) {
 		}
 	}()
 
-	sender := core.MakeCore("http://localhost:3011", nil)
-	if _, err := bob.Register("tom", "12345"); err != nil {
+	sender := core.MakeCore(infoServerAddr)
+	if _, err := sender.Register("tom", "12345"); err != nil {
 		t.Error(err)
 	}
 

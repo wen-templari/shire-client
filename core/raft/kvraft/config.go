@@ -1,8 +1,6 @@
 package kvraft
 
 import (
-	"log"
-	"net"
 	"net/rpc"
 
 	"github.com/templari/shire-client/core/raft/raft"
@@ -17,23 +15,23 @@ type Config struct {
 	Server *KVServer
 }
 
-func (cfg *Config) StartRPC() error {
-	rpc.Register(cfg.Server)
-	rpc.Register(cfg.Server.rf)
-	rpc.HandleHTTP()
+// func (cfg *Config) StartRPC() error {
+// 	rpc.Register(cfg.Server)
+// 	rpc.Register(cfg.Server.rf)
+// 	rpc.HandleHTTP()
 
-	l, e := net.Listen("tcp", ":1234")
-	if e != nil {
-		log.Fatal("listen error:", e)
-	}
+// 	l, e := net.Listen("tcp", ":1234")
+// 	if e != nil {
+// 		log.Fatal("listen error:", e)
+// 	}
 
-	l, e := cfg.Server.listener.Accept()
-	if e != nil {
-		return e
-	}
-	go cfg.Server.Serve(l)
-	return nil
-}
+// 	l, e := cfg.Server.listener.Accept()
+// 	if e != nil {
+// 		return e
+// 	}
+// 	go cfg.Server.Serve(l)
+// 	return nil
+// }
 
 func (cfg *Config) Connect() error {
 	if len(cfg.endnames) == 0 {

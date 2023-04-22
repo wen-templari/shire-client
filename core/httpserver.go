@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"github.com/templari/shire-client/core/model"
+	"github.com/templari/shire-client/model"
 )
 
 type HttpServer struct {

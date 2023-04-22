@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/templari/shire-client/core/model"
 	"github.com/templari/shire-client/core/util"
+	"github.com/templari/shire-client/model"
 )
 
 type CreateTokenRequest struct {
@@ -106,6 +106,22 @@ func (c *Core) UpdateUser(port int) (model.User, error) {
 	}
 	c.user = rep
 	return rep, nil
+}
+
+func (c *Core) GetUsers() ([]model.User, error) {
+	client := &http.Client{}
+	requestURL := fmt.Sprintf("%v/users", c.InfoServerAddress)
+	req, _ := http.NewRequest("GET", requestURL, nil)
+	resp, err := client.Do(req)
+	if err != nil {
+		return []model.User{}, err
+	}
+	rep := make([]model.User, 0)
+	body, _ := io.ReadAll(resp.Body)
+	if err = json.Unmarshal(body, &rep); err != nil {
+		return []model.User{}, err
+	}
+	return rep, err
 }
 
 func (c *Core) GetUserById(id int) (model.User, error) {

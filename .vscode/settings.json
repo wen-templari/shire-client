@@ -9,6 +9,7 @@
     "prevlog",
     "raftstate",
     "sqlx",
+    "wailsapp",
     "wailsjs"
   ]
 }
