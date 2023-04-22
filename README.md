@@ -1,7 +1,28 @@
 # Shire-Client
 
-## About
+## TODO
 
+- [ ] info server
+  - [x] API
+  - [x] database
+  - [ ] CI/CD
+- [x] project overall structure
+  - [x] core package
+  - [x] diagram
+- [x] one to one message
+- [ ] group message 
+  - [ ] start raft
+  - [ ] watch message change
+- [ ] add presistence
+- [ ] frontend imporvement
+  - [ ] search user
+  - [ ] fetch data from App
+  - [ ] group create
+  - [ ] UI imporvement
+- [ ] configeration pannel
+- [ ] CI/CD
+- [ ] testing
+- [ ] documentation
 
 ## Start development
 

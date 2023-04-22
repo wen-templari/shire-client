@@ -12,11 +12,13 @@ export const useMessageStore = defineStore("counter", () => {
   const messageList = ref(new Map<number, model.Message[]>())
 
   const currentMessageList = computed(() => {
-    if (receiver.value) {
+    if (receiver.value && receiver.value.id != undefined) {
       console.log(receiver.value)
       return messageList.value.get(receiver.value.id)
     } else if (group.value) {
       return messageList.value.get(group.value)
+    } else {
+      return []
     }
   })
 
