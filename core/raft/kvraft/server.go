@@ -62,7 +62,9 @@ type KVServer struct {
 	me      int
 	rf      *raft.Raft
 	applyCh chan raft.ApplyMsg
-	dead    int32 // set by Kill()
+	watchCh chan interface{}
+
+	dead int32 // set by Kill()
 
 	maxraftstate int // snapshot if log grows this big
 
@@ -191,6 +193,7 @@ func (kv *KVServer) applyChHandler() {
 		}
 		delete(kv.chanMap, msg.CommandIndex)
 		kv.mu.Unlock()
+		kv.watchCh <- msg.Command
 		resCh <- res
 	}
 }
@@ -214,6 +217,10 @@ func (kv *KVServer) killed() bool {
 	return z == 1
 }
 
+func (kv *KVServer) GetRaft() *raft.Raft {
+	return kv.rf
+}
+
 // servers[] contains the ports of the set of
 // servers that will cooperate via Raft to
 // form the fault-tolerant key/value service.
@@ -226,7 +233,7 @@ func (kv *KVServer) killed() bool {
 // you don't need to snapshot.
 // StartKVServer() must return quickly, so it should start goroutines
 // for any long-running work.
-func StartKVServer(servers []*rpc.Client, me int, persister *raft.Persister, maxraftstate int) *KVServer {
+func StartKVServer(servers []*rpc.Client, me int, persister *raft.Persister, maxraftstate int, watchCh chan interface{}) *KVServer {
 	// call labgob.Register on structures you want
 	// Go's RPC library to marshall/unmarshall.
 	labgob.Register(Op{})
@@ -236,6 +243,7 @@ func StartKVServer(servers []*rpc.Client, me int, persister *raft.Persister, max
 		maxraftstate: maxraftstate,
 		persister:    persister,
 		applyCh:      make(chan raft.ApplyMsg),
+		watchCh:      watchCh,
 		chanMap:      map[int]chan OpResult{},
 		kvMap:        make(map[string]string),
 		historyMap:   make(map[uuid.UUID]historyOpResult),
