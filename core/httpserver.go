@@ -3,6 +3,7 @@ package core
 import (
 	"net"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"github.com/templari/shire-client/model"
@@ -37,9 +38,33 @@ func (s *HttpServer) Start() {
 			return err
 		}
 		if err := s.core.ReceiveMessage(message); err != nil {
-			return err
+			return c.JSON(http.StatusInternalServerError, err)
 		}
 		return c.JSON(http.StatusOK, message)
+	})
+
+	e.POST("/groups/:id/prepare", func(c echo.Context) error {
+		id, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			return err
+		}
+		err = s.core.PrepareGroup(id)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err)
+		}
+		return c.JSON(http.StatusOK, "ok")
+	})
+
+	e.POST("/groups/:id/start", func(c echo.Context) error {
+		id, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			return err
+		}
+		err = s.core.StartGroup(id)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err)
+		}
+		return c.JSON(http.StatusOK, "ok")
 	})
 
 	e.Logger.Fatal(e.Start(""))

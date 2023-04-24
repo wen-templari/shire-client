@@ -112,6 +112,7 @@ func (ck *Clerk) PutAppend(key string, value string, op string) {
 		log.Println("starting :", nextStart)
 		ck.mu.Unlock()
 		for i := nextStart; i < len(ck.servers); i++ {
+			log.Println(ck.servers[i])
 			reply := PutAppendReply{}
 			if err := ck.servers[i].Call("KVServer.PutAppend", &args, &reply); err != nil {
 				// ck.mu.Lock()

@@ -5,7 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/templari/shire-client/core/util"
 	"github.com/templari/shire-client/model"
@@ -77,12 +80,18 @@ func (c *Core) Login(id int, password string) (model.User, error) {
 	return c.user, nil
 }
 
-func (c *Core) UpdateUser(port int) (model.User, error) {
+func (c *Core) UpdateUser() (model.User, error) {
 	client := &http.Client{}
 	address, _ := util.GetIP()
+	getPort := func(l net.Listener) int {
+		res := strings.Split(l.Addr().String(), ":")
+		port, _ := strconv.Atoi(res[len(res)-1])
+		return port
+	}
 	bytesData, _ := json.Marshal(model.UpdateUserRequest{
 		Address: address,
-		Port:    port,
+		Port:    getPort(c.listener),
+		RPCPort: getPort(c.rpcListener),
 	})
 	requestURL := fmt.Sprintf("%v/users/%v", c.InfoServerAddress, c.user.Id)
 	req, _ := http.NewRequest("PUT", requestURL, bytes.NewReader(bytesData))
@@ -101,7 +110,7 @@ func (c *Core) UpdateUser(port int) (model.User, error) {
 	return rep, nil
 }
 
-func (c *Core) GetUsers() ([]model.User, error) {
+func (c Core) GetUsers() ([]model.User, error) {
 	client := &http.Client{}
 	requestURL := fmt.Sprintf("%v/users", c.InfoServerAddress)
 	req, _ := http.NewRequest("GET", requestURL, nil)
@@ -117,7 +126,7 @@ func (c *Core) GetUsers() ([]model.User, error) {
 	return rep, err
 }
 
-func (c *Core) GetUserById(id int) (model.User, error) {
+func (c Core) GetUserById(id int) (model.User, error) {
 	client := &http.Client{}
 	requestURL := fmt.Sprintf("%v/users/%v", c.InfoServerAddress, id)
 	req, _ := http.NewRequest("GET", requestURL, nil)

@@ -96,7 +96,7 @@ func (kv *KVServer) execute(op Op) (res OpResult) {
 	}
 	return
 }
-func (kv *KVServer) Get(args *GetArgs, reply *GetReply) {
+func (kv *KVServer) Get(args *GetArgs, reply *GetReply) (error error) {
 	// log.Printf("%v Get %v", kv.me, args.Key)
 	v, err := kv.callStart(&Op{
 		Identifier: args.Identifier,
@@ -109,9 +109,10 @@ func (kv *KVServer) Get(args *GetArgs, reply *GetReply) {
 	if err == ErrWrongLeader {
 		reply.Leader = kv.rf.GetLeader()
 	}
+	return nil
 }
 
-func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
+func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) (error error) {
 	// log.Printf("%v %v key:%v value:%v", kv.me, args.Op, args.Key, args.Value)
 	op := &Op{
 		Identifier: args.Identifier,
@@ -124,6 +125,7 @@ func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
 	if err == ErrWrongLeader {
 		reply.Leader = kv.rf.GetLeader()
 	}
+	return nil
 }
 
 func (kv *KVServer) callStart(op *Op) (string, Err) {
@@ -162,6 +164,7 @@ func (kv *KVServer) callStart(op *Op) (string, Err) {
 func (kv *KVServer) applyChHandler() {
 	for !kv.killed() {
 		msg := <-kv.applyCh
+		log.Println(kv.me, "applyChHandler", msg)
 		// CommandValid==false for snapshot
 		if !msg.CommandValid {
 			kv.readPersist(msg.Snapshot)
@@ -193,7 +196,7 @@ func (kv *KVServer) applyChHandler() {
 		}
 		delete(kv.chanMap, msg.CommandIndex)
 		kv.mu.Unlock()
-		kv.watchCh <- msg.Command
+		kv.watchCh <- msg.Command.(Op)
 		resCh <- res
 	}
 }
@@ -251,7 +254,7 @@ func StartKVServer(servers []*rpc.Client, me int, persister *raft.Persister, max
 	log.Printf("%v server created: maxraftstate:%v", me, maxraftstate)
 	kv.rf = raft.Make(servers, me, persister, kv.applyCh)
 
-	kv.readPersist(persister.ReadSnapshot())
+	// kv.readPersist(persister.ReadSnapshot())
 	go kv.applyChHandler()
 	return kv
 }

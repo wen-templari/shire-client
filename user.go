@@ -4,16 +4,16 @@ import (
 	"github.com/templari/shire-client/model"
 )
 
-func (a *App) Register(name string, password string) (model.User , error) {
+func (a *App) Register(name string, password string) (model.User, error) {
 	return a.core.Register(name, password)
 }
 
-func (a *App) Login(id int, password string) (model.User , error) {
+func (a *App) Login(id int, password string) (model.User, error) {
 	return a.core.Login(id, password)
 }
 
-func (a *App) UpdateUser(port int) (model.User, error) {
-	return a.core.UpdateUser(port)
+func (a *App) UpdateUser() (model.User, error) {
+	return a.core.UpdateUser()
 }
 
 func (a *App) GetUsers() ([]model.User, error) {

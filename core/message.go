@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/templari/shire-client/model"
 )
@@ -67,6 +68,13 @@ func (c *Core) sendOneToOneMessage(message model.Message) error {
 
 func (c *Core) sendGroupMessage(message model.Message) error {
 	// TODO not implemented
+	// find group's wrapper
+	w, ok := c.wrappers[message.GroupId]
+	if !ok {
+		log.Printf("wrapper not found for group %v", message.GroupId)
+	}
+	w.client.Append(strconv.Itoa(message.GroupId), message.Content)
+
 	return nil
 }
 

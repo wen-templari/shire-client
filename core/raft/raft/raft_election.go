@@ -71,7 +71,10 @@ func (rf *Raft) startElection() {
 		}
 		go func(peer int) {
 			tempReply := RequestVoteReply{}
+			client := rf.peers[peer]
+			log.Printf("%v => voteRequest: %v | client %v | Term %v | %v \n", rf.me, peer, client, term, requestVoteArgs)
 			error := rf.peers[peer].Call("Raft.RequestVote", requestVoteArgs, &tempReply)
+			log.Println(error)
 			ok := error == nil
 			rf.mu.Lock()
 			defer rf.mu.Unlock()
@@ -109,7 +112,7 @@ func (rf *Raft) startElection() {
 	}
 }
 
-func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
+func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) (err error) {
 	// Your code here (2A, 2B).
 	rf.mu.Lock()
 	defer rf.mu.Unlock()
@@ -144,4 +147,5 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 		rf.persist()
 		return
 	}
+	return nil
 }

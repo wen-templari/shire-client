@@ -22,7 +22,7 @@ type InstallSnapshotReply struct {
 	Term int
 }
 
-func (rf *Raft) InstallSnapshot(args *InstallSnapshotArgs, reply *InstallSnapshotReply) {
+func (rf *Raft) InstallSnapshot(args *InstallSnapshotArgs, reply *InstallSnapshotReply) (err error) {
 	rf.mu.Lock()
 	defer rf.mu.Unlock()
 	term := rf.currentTerm
@@ -49,6 +49,8 @@ func (rf *Raft) InstallSnapshot(args *InstallSnapshotArgs, reply *InstallSnapsho
 	rf.commitIndex = args.LastIncludedIndex
 	rf.persist()
 	rf.printStatus("InstallSnapshot")
+
+	return
 }
 
 func (rf *Raft) sendInstallSnapshot(target int, term int, args *InstallSnapshotArgs) {
