@@ -12,10 +12,8 @@ import (
 )
 
 func (c *Core) ReceiveMessage(message model.Message) error {
-	//TODO not implemented
-	// save message to db ??
 	// notify watchers
-	log.Printf("Received message: %v", message)
+	log.Printf("%v: Received message: %v", c.user.Id, message)
 	for _, ch := range c.subscribers {
 		ch <- message
 	}
@@ -58,7 +56,6 @@ func (c *Core) sendOneToOneMessage(message model.Message) error {
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("failed to send message to %v:%v", receiver.Address, receiver.Port)
 	}
-	// save message to db ???
 	// notify watchers
 	for _, ch := range c.subscribers {
 		ch <- message
@@ -67,13 +64,14 @@ func (c *Core) sendOneToOneMessage(message model.Message) error {
 }
 
 func (c *Core) sendGroupMessage(message model.Message) error {
-	// TODO not implemented
 	// find group's wrapper
 	w, ok := c.wrappers[message.GroupId]
 	if !ok {
 		log.Printf("wrapper not found for group %v", message.GroupId)
+		return fmt.Errorf("wrapper not found for group %v", message.GroupId)
 	}
-	w.client.Append(strconv.Itoa(message.GroupId), message.Content)
+	s, _ := json.Marshal(message)
+	w.client.Append(strconv.Itoa(message.GroupId), string(s))
 
 	return nil
 }

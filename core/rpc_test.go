@@ -1,15 +1,18 @@
 package core_test
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
 	"net"
 	"net/http"
 	"net/rpc"
+	"strings"
 	"testing"
 
 	"github.com/templari/shire-client/core"
+	"github.com/templari/shire-client/model"
 )
 
 type Args struct {
@@ -125,4 +128,21 @@ func TestMultiHandlers(t *testing.T) {
 	// }
 
 	// client, err := rpc.DialHTTP("tcp", "
+}
+
+type StringifyArgs struct {
+	Id   int
+	Name string
+}
+
+func TestStringify(t *testing.T) {
+	s := "{{4b34119e-3e0b-40ae-ba2c-e707dafd2d0b 2} APPEND 61 {'from':206,'to':0,'content':'hello Again From Alice','groupId':61,'time':'123'}}"
+	s = s[1 : len(s)-1]
+	arr := strings.Split(s, " ")
+	log.Println(arr)
+	log.Println(arr[len(arr)-1])
+	msg := model.Message{}
+	l := arr[len(arr)-1]
+	json.Unmarshal([]byte(l), &msg)
+	log.Print(msg)
 }

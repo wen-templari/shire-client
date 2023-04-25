@@ -71,8 +71,8 @@ func (rf *Raft) startElection() {
 		}
 		go func(peer int) {
 			tempReply := RequestVoteReply{}
-			client := rf.peers[peer]
-			log.Printf("%v => voteRequest: %v | client %v | Term %v | %v \n", rf.me, peer, client, term, requestVoteArgs)
+			// client := rf.peers[peer]
+			// log.Printf("%v => voteRequest: %v | client %v | Term %v | %v \n", rf.me, peer, client, term, requestVoteArgs)
 			error := rf.peers[peer].Call("Raft.RequestVote", requestVoteArgs, &tempReply)
 			log.Println(error)
 			ok := error == nil

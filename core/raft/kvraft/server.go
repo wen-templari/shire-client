@@ -84,7 +84,7 @@ func (kv *KVServer) execute(op Op) (res OpResult) {
 		if !ok {
 			kv.kvMap[op.Key] = op.Value
 		} else {
-			kv.kvMap[op.Key] = fmt.Sprintf("%v%v", v, op.Value)
+			kv.kvMap[op.Key] = fmt.Sprintf("%v|%v", v, op.Value)
 		}
 	} else if op.Type == PUT {
 		kv.kvMap[op.Key] = op.Value
@@ -189,6 +189,12 @@ func (kv *KVServer) applyChHandler() {
 			log.Printf("%v create snapshot %v>%v", kv.me, size, kv.maxraftstate)
 			kv.rf.Snapshot(msg.CommandIndex, snapshot)
 		}
+
+		// notify watcher
+		key := op.Key
+		value := kv.kvMap[key]
+		kv.watchCh <- value
+
 		resCh, ok := kv.chanMap[msg.CommandIndex]
 		if !ok {
 			kv.mu.Unlock()
@@ -196,7 +202,7 @@ func (kv *KVServer) applyChHandler() {
 		}
 		delete(kv.chanMap, msg.CommandIndex)
 		kv.mu.Unlock()
-		kv.watchCh <- msg.Command.(Op)
+
 		resCh <- res
 	}
 }

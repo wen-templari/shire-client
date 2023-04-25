@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 	"sync"
 
 	"github.com/templari/shire-client/model"
@@ -151,13 +152,30 @@ func (c *Core) StartGroup(id int) error {
 	go func() {
 		for {
 			data := <-w.watchCh
-			log.Println("receive data from watch channel", data)
-			// message, ok := data.(model.Message)
+			log.Printf("%v receive data from watch channel: %v", c.user.Id, data)
 
-			// log.Printf("receive message %v,ok: %v", message, ok)
-			// if ok {
-			// 	c.ReceiveMessage(message)
+			message := model.Message{}
+
+			s, ok := data.(string)
+			if !ok {
+				log.Println("data is not []byte")
+				continue
+			}
+			rawMessages := strings.Split(s, "|")
+			// for _, rawMessage := range rawMessages {
+			// 	message := model.Message{}
+			// 	err := json.Unmarshal([]byte(rawMessage), &message)
+			// 	if err != nil {
+			// 		log.Printf("unmarshal message %v err: %v", rawMessage, err)
+			// 		continue
+			// 	}
+			// 	messages = append(messages, message)
 			// }
+			err := json.Unmarshal([]byte(rawMessages[len(rawMessages)-1]), &message)
+			// log.Printf("receive message %v,err: %v", message, err)
+			if err == nil {
+				c.ReceiveMessage(message)
+			}
 		}
 	}()
 

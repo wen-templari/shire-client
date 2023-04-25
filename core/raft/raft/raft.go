@@ -192,6 +192,6 @@ func Make(peers []*rpc.Client, me int,
 	go rf.electionTimer()
 	go rf.checkCommitTimer()
 
-	go rf.statusReport()
+	// go rf.statusReport()
 	return rf
 }
