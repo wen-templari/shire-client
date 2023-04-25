@@ -10,13 +10,13 @@
   - [x] core package
   - [x] diagram
 - [x] one to one message
-- [ ] group message 
-  - [ ] start raft
-  - [ ] watch message change
+- [x] group message 
+  - [x] start raft
+  - [x] watch message change
 - [ ] add presistence
 - [ ] frontend imporvement
   - [ ] search user
-  - [ ] fetch data from App
+  - [x] fetch data from App
   - [ ] group create
   - [ ] UI imporvement
 - [ ] configeration pannel
@@ -64,6 +64,7 @@ Assume a user called Alice want to send message to Bob.
         "name": "Alice",
         "address": "192.168.1.52",
         "port": 51463,
+        "rpcPort": 51464,
         "createdAt": "2023-04-21T14:10:06.235Z",
         "updatedAt": "2023-04-21T14:10:06.256Z"
       },

@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 
 	"github.com/templari/shire-client/model"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -12,6 +13,7 @@ func (a App) Ping() string {
 }
 
 func (a *App) SendMessage(message model.Message) error {
+	message.Time = time.Now().Format(time.RFC3339)
 	log.Printf("Sending message: %v", message)
 	return a.core.SendMessage(message)
 }
