@@ -1,15 +1,12 @@
 import { createRouter, createWebHashHistory } from "vue-router"
-import Index from "@/views/Index.vue"
-import Login from "@/views/Login.vue"
-import Message from "@/views/Message.vue"
 import { userAccountStore } from "../store/account"
 
 const routes = [
-  { path: "/", name: "Message", component: Message },
+  { path: "/", name: "Message", component: () => import("@/views/Message/Message.vue") },
   {
     path: "/login",
     name: "Login",
-    component: Login,
+    component: () => import("@/views/Login.vue"),
   },
 ]
 

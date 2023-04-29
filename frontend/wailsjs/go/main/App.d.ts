@@ -18,4 +18,4 @@ export function Register(arg1:string,arg2:string):Promise<model.User>;
 
 export function SendMessage(arg1:model.Message):Promise<Error>;
 
-export function UpdateUser(arg1:number):Promise<model.User>;
+export function UpdateUser():Promise<model.User>;

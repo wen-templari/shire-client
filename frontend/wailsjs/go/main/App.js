@@ -34,6 +34,6 @@ export function SendMessage(arg1) {
   return window['go']['main']['App']['SendMessage'](arg1);
 }
 
-export function UpdateUser(arg1) {
-  return window['go']['main']['App']['UpdateUser'](arg1);
+export function UpdateUser() {
+  return window['go']['main']['App']['UpdateUser']();
 }

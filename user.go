@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/templari/shire-client/model"
 )
 
@@ -9,7 +11,11 @@ func (a *App) Register(name string, password string) (model.User, error) {
 }
 
 func (a *App) Login(id int, password string) (model.User, error) {
-	return a.core.Login(id, password)
+	u, err := a.core.Login(id, password)
+	if err != nil {
+		log.Println(err)
+	}
+	return u, err
 }
 
 func (a *App) UpdateUser() (model.User, error) {

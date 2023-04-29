@@ -28,7 +28,7 @@
           center ? 'text-center' : '',
           disabled ? ' bg-opacity-0 border-gray-400/60 shadow-none cursor-default pointer-events-none' : 'border-gray-400/10',
         ]"
-        class="transition duration-100 p-2 w-full rounded-[6px] shadow-innersm materialInput hover:(border-gray-300)"
+        class="transition duration-100 p-2 w-full rounded-[12px] shadow-innersm materialInput hover:(border-gray-300)"
         :required="required"
         :placeholder="placeholder"
         v-model.lazy="input"
@@ -37,7 +37,7 @@
       />
       <textarea
         v-if="type == 'textarea'"
-        class="rounded-[6px] materialInput h-36 mt-1 p-3 placeholder-gray-600 w-full resize-none transition duration-100"
+        class="rounded-[12px] materialInput h-36 mt-1 p-3 placeholder-gray-600 w-full resize-none transition duration-100"
         :class="[
           warning ? 'ring-[2px] ring-warning' : '',
           isValid && input ? '' : '',

@@ -20,6 +20,7 @@ const login = () => {
   if (id.value == undefined || password.value == undefined) {
     return
   }
+  console.log(id.value, password.value)
   Login(id.value, password.value).then(res => {
     store.user = res
     router.push("/")
@@ -54,7 +55,7 @@ const register = () => {
           <InputBase class="my-2 w-full" v-model:content.number="id" :passWarning="isIDValid" placeholder="ID" />
           <InputBase class="my-2 w-full" v-model:content="password" :passWarning="isPasswordValid" placeholder="密码" type="password" />
           <button
-            class="mt-6 rounded text-[20px] px-[16px] py-[12px] text-systemBlue-light bg-systemWhite-light w-full"
+            class="mt-6 rounded text-[18px] px-[16px] py-[12px] text-systemBlue-light bg-systemWhite-light w-full"
             @click.prevent="login"
           >
             登入

@@ -1,6 +1,6 @@
 <template>
   <div class="flex h-full">
-    <div class="h-full flex flex-col w-80 resize-x overflow-auto">
+    <div class="h-full flex flex-col w-80 resize-x overflow-auto border-r border-labelColor-light-tertiary">
       <div class="h-[92px] flex-shrink-0 px-2 pt-[50px]" style="--wails-draggable: drag">
         <slot name="side-head"></slot>
       </div>
