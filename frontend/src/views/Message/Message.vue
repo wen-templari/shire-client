@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Ping, ReceiveMessage, SendMessage } from "../../../wailsjs/go/main/App"
+import { GetUserById, Ping, ReceiveMessage, SendMessage } from "../../../wailsjs/go/main/App"
 import { GetUsers } from "../../../wailsjs/go/main/App"
 import BaseLayout from "../../layout/BaseLayout.vue"
 import { type messageList, useMessageStore } from "../../store/message"
@@ -18,12 +18,15 @@ const searchInput = ref("")
 const searchResult = ref<model.User[]>([])
 const onSearchInput = (e: Event) => {
   const target = e.target as HTMLInputElement
-  searchResult.value = userStore.userList.filter(user => user.name?.indexOf(target.value) != -1)
-  console.log(searchResult)
+  const lowercaseValue = target.value.toLowerCase()
+  searchResult.value = userStore.userList.filter(user => user.name?.toLocaleLowerCase().indexOf(lowercaseValue) != -1)
   // messageStore.searchUser(target.value)
 }
 const onSelectUser = (user: model.User) => {
-  console.log(user)
+  startGroup.value = false
+  searchInput.value = ""
+  messageStore.selectContact(user)
+  console.log(messageStore.messageList)
 }
 
 const startGroup = ref(false)
@@ -37,16 +40,22 @@ const onGroupStarted = () => {
 
 const onSelectContact = (e: messageList) => {
   startGroup.value = false
-  messageStore.selectContact(e)
+  if (e.user != undefined) {
+    messageStore.selectContact(e.user)
+  } else if (e.group != undefined) {
+    messageStore.selectContact(e.group)
+  }
 }
 
 onMounted(() => {
   messageStore.mock()
-  userStore.updateUserList()
+  messageStore.initMessageList()
+  // userStore.updateUserList()
 })
 
 EventsOn("onMessage", (data: model.Message) => {
   console.log(data)
+  messageStore.onReceiveMessage(data, GetUserById)
 })
 </script>
 
@@ -72,15 +81,22 @@ EventsOn("onMessage", (data: model.Message) => {
             />
           </svg>
         </div>
-        <div class="absolute h-40 overflow-auto w-full mt-2 rounded-[6px] flex flex-col bg-systemWhite-light" v-if="searchInput != ''">
-          <div class="group" v-for="user in searchResult" :key="user.id" @click="onSelectUser(user)">
-            <div class="py-1 px-2 flex justify-between cursor-pointer hover:bg-systemBackground-lightSecondary">
-              <span class="">{{ user.name }}</span>
-              <span class="textDescription text-labelColor-light-secondary">({{ user.id }})</span>
+
+        <div class="absolute inset-x-0 h-32 -bottom-32 pr-[36px]" v-if="searchInput != ''">
+          <div class="max-h-32 overflow-auto w-full mt-2 rounded-[6px] flex flex-col bg-systemWhite-light">
+            <div class="group" v-for="user in searchResult" :key="user.id" @click="onSelectUser(user)">
+              <div class="py-1 px-2 flex justify-between cursor-pointer hover:bg-systemBackground-lightSecondary">
+                <span class="">{{ user.name }}</span>
+                <span class="textDescription text-labelColor-light-secondary">({{ user.id }})</span>
+              </div>
+              <div class="h-[1px] bg-labelColor-light-tertiary w-full group-last:hidden"></div>
             </div>
-            <div class="h-[1px] bg-labelColor-light-tertiary w-full group-last:hidden"></div>
           </div>
         </div>
+        <!-- <div
+          class="absolute max-h-40 overflow-auto w-full mt-2 rounded-[6px] flex flex-col bg-systemWhite-light"
+          v-if="searchInput != ''"
+        ></div> -->
       </div>
     </template>
     <template #side-body>
@@ -93,7 +109,7 @@ EventsOn("onMessage", (data: model.Message) => {
               :class="{ 'bg-systemBlue-light text-systemWhite-light': contact.user.id == messageStore.receiver?.id }"
             >
               <user-avatar class="shrink-0" :user="contact.user"></user-avatar>
-              <div class="ml-3 text-sm flex flex-col items-start flex-grow h-12" v-if="contact.messages && contact.messages.length > 0">
+              <div class="ml-3 text-sm flex flex-col items-start flex-grow h-12">
                 <div class="flex justify-between w-full">
                   <div class="text-sm">
                     <span class="">{{ contact.user.name }}</span>
@@ -103,11 +119,18 @@ EventsOn("onMessage", (data: model.Message) => {
                       ({{ contact.user.id }})</span
                     >
                   </div>
-                  <div :class="contact.user.id == messageStore.receiver?.id ? 'text-systemWhite-light' : 'text-labelColor-light-secondary'">
-                    {{ contact.messages[contact.messages.length - 1].time }}
+                  <div
+                    v-if="contact.messages && contact.messages.length > 0"
+                    :class="contact.user.id == messageStore.receiver?.id ? 'text-systemWhite-light' : 'text-labelColor-light-secondary'"
+                  >
+                    {{ new Date(Date.parse(contact.messages[contact.messages.length - 1].time)).toLocaleDateString() }}
                   </div>
                 </div>
-                <div class="text-xs" :class="contact.user.id == messageStore.receiver?.id ? 'text-systemWhite-light' : 'text-[#6f6f6f]'">
+                <div
+                  v-if="contact.messages && contact.messages.length > 0"
+                  class="text-xs overflow-hidden text-start"
+                  :class="contact.user.id == messageStore.receiver?.id ? 'text-systemWhite-light' : 'text-[#6f6f6f]'"
+                >
                   {{ contact.messages[contact.messages.length - 1].content }}
                 </div>
               </div>

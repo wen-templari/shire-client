@@ -1,14 +1,20 @@
 {
   "cSpell.words": [
+    "datetime",
     "endnames",
+    "jmoiron",
     "kvraft",
     "labgob",
     "labstack",
+    "logrus",
+    "mattn",
     "maxraftstate",
     "myname",
     "prevlog",
     "raftstate",
+    "sirupsen",
     "sqlx",
+    "varchar",
     "wailsapp",
     "wailsjs"
   ]

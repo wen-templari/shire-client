@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/templari/shire-client/model"
 )
@@ -16,11 +17,13 @@ func (c *Core) ReceiveMessage(message model.Message) error {
 	log.Printf("%v: Received message: %v", c.user.Id, message)
 	for _, ch := range c.subscribers {
 		ch <- message
+		log.Println(len(c.subscribers))
 	}
 	return nil
 }
 
 func (c *Core) SendMessage(message model.Message) error {
+	message.Time = time.Now().Format(time.RFC3339)
 	if message.GroupId <= 0 {
 		return c.sendOneToOneMessage(message)
 	} else {
@@ -60,6 +63,7 @@ func (c *Core) sendOneToOneMessage(message model.Message) error {
 	for _, ch := range c.subscribers {
 		ch <- message
 	}
+	log.Printf("%v: Sending message: %v", c.user.Id, message)
 	return nil
 }
 
@@ -73,6 +77,7 @@ func (c *Core) sendGroupMessage(message model.Message) error {
 	s, _ := json.Marshal(message)
 	w.client.Append(strconv.Itoa(message.GroupId), string(s))
 
+	log.Printf("%v: Sending message: %v", c.user.Id, message)
 	return nil
 }
 

@@ -40,36 +40,28 @@ func (c *Core) CreateGroup(idList []int) (group model.Group, err error) {
 		wg.Add(1)
 		go func(user model.User) {
 			defer wg.Done()
-			err := c.CallPrepare(user, group.Id)
+			err := c.callPrepare(user, group.Id)
 			if err != nil {
 				log.Println(err)
 			}
 		}(user)
 	}
 	wg.Wait()
-	// 3. call start
-	// err = c.StartGroup(group.Id)
-	// if err != nil {
-	// 	log.Print(err)
-	// }
 
 	wg = sync.WaitGroup{}
 	for _, user := range group.Users {
 		wg.Add(1)
 		go func(user model.User) {
 			defer wg.Done()
-			err := c.CallStart(user, group.Id)
+			err := c.callStart(user, group.Id)
 			log.Printf("calling start for %v,err: %v", user, err)
-			// if err != nil {
-			// 	log.Println(err)
-			// }
 		}(user)
 	}
 	wg.Wait()
 	return
 }
 
-func (c *Core) CallPrepare(user model.User, groupId int) error {
+func (c *Core) callPrepare(user model.User, groupId int) error {
 	client := &http.Client{}
 	requestURL := fmt.Sprintf("http://%v:%v/groups/%v/prepare", user.Address, user.Port, groupId)
 	log.Println(requestURL)
@@ -85,7 +77,7 @@ func (c *Core) CallPrepare(user model.User, groupId int) error {
 	return err
 }
 
-func (c *Core) CallStart(user model.User, groupId int) error {
+func (c *Core) callStart(user model.User, groupId int) error {
 	client := &http.Client{}
 	requestURL := fmt.Sprintf("http://%v:%v/groups/%v/start", user.Address, user.Port, groupId)
 	log.Println(requestURL)

@@ -2,9 +2,9 @@ package main
 
 import (
 	"log"
-	"time"
 
 	"github.com/templari/shire-client/model"
+	"github.com/templari/shire-client/repo"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -13,9 +13,11 @@ func (a App) Ping() string {
 }
 
 func (a *App) SendMessage(message model.Message) error {
-	message.Time = time.Now().Format(time.RFC3339)
-	log.Printf("Sending message: %v", message)
-	return a.core.SendMessage(message)
+	err := a.core.SendMessage(message)
+	if err != nil {
+		log.Printf(" err Sending message: %v, err: %v", message, err)
+	}
+	return err
 }
 
 // for testing only, this should not be needed
@@ -30,6 +32,13 @@ func (a *App) messageUpdateHandler() {
 		message := <-a.messageChan
 		runtime.EventsEmit(a.ctx, "onMessage", message)
 
-		// TODO  persist
+		err := repo.SaveMessage(&message)
+		if err != nil {
+			log.Println("error on persisting data", err)
+		}
 	}
+}
+
+func (a *App) GetMessages() ([]model.Message, error) {
+	return repo.GetAllMessage()
 }

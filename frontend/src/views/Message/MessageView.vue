@@ -4,6 +4,7 @@ import { SendMessage } from "../../../wailsjs/go/main/App"
 import { model } from "../../../wailsjs/go/models"
 import { userAccountStore } from "../../store/account"
 import { useMessageStore } from "../../store/message"
+import UserAvatar from "../../components/User/UserAvatar.vue"
 
 const userStore = userAccountStore()
 const messageStore = useMessageStore()

@@ -2,6 +2,7 @@ package core_test
 
 import (
 	"log"
+	"math/rand"
 	"testing"
 
 	"github.com/templari/shire-client/core"
@@ -18,14 +19,44 @@ func TestCoreLogin(t *testing.T) {
 	}
 }
 
-func TestStartBobServer(t *testing.T) {
-	bob := core.MakeCore(infoServerAddr)
+func TestStartMandoServer(t *testing.T) {
+	mando := core.MakeCore(infoServerAddr)
 
-	if _, err := bob.Login(7, "12345"); err != nil {
+	if _, err := mando.Login(2, "12345"); err != nil {
 		t.Error(err)
 	}
-
+	replies := []string{"This is the way.", "I have spoken",
+		"I can bring you in warm, or I can bring you in cold.",
+		"I like those odds.",
+		"… Bounty hunting is a complicated profession.",
+		"I’m a Mandalorian. Weapons are part of my religion.",
+		"Stop touching things.",
+		"Wherever I go, he goes",
+		"Dank farrik.",
+		"I’ll see you again. I promise."}
+	messageChan := make(chan model.Message, 10)
+	mando.Subscribe(messageChan)
 	for {
+		message := <-messageChan
+		var toWhomShouldIReply int
+		// TODO when is group
+		if message.From == mando.GetUser().Id {
+			continue
+		} else {
+			toWhomShouldIReply = message.From
+		}
+		msg := model.Message{
+			From:    mando.GetUser().Id,
+			To:      toWhomShouldIReply,
+			Content: replies[rand.Intn(len(replies))],
+		}
+		// rand.Seed(time.Now().Unix()) // initialize global pseudo random generator
+		// time.Sleep(1000 * time.Microsecond)
+		err := mando.SendMessage(msg)
+		if err != nil {
+			log.Println(err)
+		}
+
 	}
 
 }

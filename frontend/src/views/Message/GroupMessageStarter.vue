@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { model } from "../../../wailsjs/go/models"
-import { computed, ref } from "vue"
+import { computed, onMounted, ref } from "vue"
 import UserAvatar from "../../components/User/UserAvatar.vue"
 import { userAccountStore } from "../../store/account"
 
@@ -26,6 +26,11 @@ const onDeleteUser = (user: model.User) => {
   const index = groupUserList.value.findIndex(u => u.id == user.id)
   groupUserList.value.splice(index, 1)
 }
+onMounted(() => {
+  userStore.updateUserList()
+  userStore.updateUserList()
+  groupUserList.value.push(userStore.user as model.User)
+})
 
 const startGroup = () => {}
 </script>
@@ -48,11 +53,8 @@ const startGroup = () => {}
           :disabled="groupUserList.length > 4"
           @input="onSearchInput"
         />
-        <div class="absolute inset-x-0 h-32 -bottom-32">
-          <div
-            class="absolute inset-x-0 bottom-0 max-h-32 overflow-auto w-full mt-2 rounded-[6px] flex flex-col bg-systemWhite-light"
-            v-if="searchInput != ''"
-          >
+        <div class="absolute inset-x-0 h-32 -bottom-32" v-if="searchInput != ''">
+          <div class="max-h-32 overflow-auto w-full mt-2 rounded-[6px] flex flex-col bg-systemWhite-light">
             <div class="group" v-for="user in searchResult" :key="user.id" @click="onSelectUser(user)">
               <div class="py-1 px-2 flex justify-between cursor-pointer hover:bg-systemBackground-lightSecondary">
                 <span class="">{{ user.name }}</span>
@@ -65,12 +67,13 @@ const startGroup = () => {}
       </div>
     </div>
     <button
-      class="mt-40 rounded text-[18px] px-[16px] py-[12px] text-systemBlue-light bg-systemWhite-light w-52"
-      :class="groupUserList.length < 3 ? 'bg-labelColor-light-tertiary text-labelColor-light-secondary' : 'cursor-pointer'"
+      class="mt-40 rounded text-[18px] px-[12px] py-[6px] text-systemBlue-light bg-systemWhite-light w-52"
       @click.prevent="startGroup"
       :disabled="groupUserList.length < 3"
     >
       开始
     </button>
+
+    <!-- :class="groupUserList.length < 3 ? 'bg-labelColor-light-tertiary text-labelColor-light-secondary' : 'cursor-pointer'" -->
   </div>
 </template>
