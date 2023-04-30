@@ -25,6 +25,9 @@ func (a *App) Login(id int, password string) (model.User, error) {
 	repo.InitDB(u.Id)
 	return u, err
 }
+func (a *App) Logout() {
+	a.core.Logout()
+}
 
 func (a *App) UpdateUser() (model.User, error) {
 	return a.core.UpdateUser()
@@ -36,4 +39,8 @@ func (a *App) GetUsers() ([]model.User, error) {
 
 func (a *App) GetUserById(id int) (model.User, error) {
 	return a.core.GetUserById(id)
+}
+
+func (a *App) GetSelf() model.User {
+	return a.core.GetUser()
 }

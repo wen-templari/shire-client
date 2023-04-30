@@ -34,6 +34,11 @@ func (c *Core) CreateGroup(idList []int) (group model.Group, err error) {
 		return
 	}
 
+	return c.SetupGroup(group.Id)
+}
+
+func (c *Core) SetupGroup(groupId int) (group model.Group, err error) {
+	group, _ = c.GetGroupById(groupId)
 	// 2. call prepare group
 	wg := sync.WaitGroup{}
 	for _, user := range group.Users {
@@ -64,7 +69,6 @@ func (c *Core) CreateGroup(idList []int) (group model.Group, err error) {
 func (c *Core) callPrepare(user model.User, groupId int) error {
 	client := &http.Client{}
 	requestURL := fmt.Sprintf("http://%v:%v/groups/%v/prepare", user.Address, user.Port, groupId)
-	log.Println(requestURL)
 	req, err := http.NewRequest("POST", requestURL, nil)
 	if err != nil {
 		log.Print(err)
@@ -80,7 +84,6 @@ func (c *Core) callPrepare(user model.User, groupId int) error {
 func (c *Core) callStart(user model.User, groupId int) error {
 	client := &http.Client{}
 	requestURL := fmt.Sprintf("http://%v:%v/groups/%v/start", user.Address, user.Port, groupId)
-	log.Println(requestURL)
 	req, err := http.NewRequest("POST", requestURL, nil)
 	if err != nil {
 		log.Print(err)

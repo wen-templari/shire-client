@@ -14,6 +14,10 @@ export function GetMessages() {
   return window['go']['main']['App']['GetMessages']();
 }
 
+export function GetSelf() {
+  return window['go']['main']['App']['GetSelf']();
+}
+
 export function GetUserById(arg1) {
   return window['go']['main']['App']['GetUserById'](arg1);
 }
@@ -28,6 +32,10 @@ export function Greet(arg1) {
 
 export function Login(arg1, arg2) {
   return window['go']['main']['App']['Login'](arg1, arg2);
+}
+
+export function Logout() {
+  return window['go']['main']['App']['Logout']();
 }
 
 export function Ping() {

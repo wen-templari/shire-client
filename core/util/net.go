@@ -6,20 +6,32 @@ import (
 	"io"
 	"net"
 	"net/http"
-	"os"
 )
 
 func GetIP() (string, error) {
-	name, err := os.Hostname()
+	addrs, err := net.InterfaceAddrs()
 	if err != nil {
-		return "", err
+		return "", nil
 	}
+	for _, address := range addrs {
+		// check the address type and if it is not a loopback the display it
+		if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+			if ipnet.IP.To4() != nil {
+				return ipnet.IP.String(), nil
+			}
+		}
+	}
+	return "", nil
+	// name, err := os.Hostname()
+	// if err != nil {
+	// 	return "", err
+	// }
 
-	addrs, err := net.LookupHost(name)
-	if err != nil {
-		return "", err
-	}
-	return addrs[0], nil
+	// addrs, err := net.LookupHost(name)
+	// if err != nil {
+	// 	return "", err
+	// }
+	// return addrs[0], nil
 }
 
 func CreateListener() (l net.Listener, close func()) {

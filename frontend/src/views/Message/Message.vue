@@ -4,12 +4,13 @@ import { GetUsers } from "../../../wailsjs/go/main/App"
 import BaseLayout from "../../layout/BaseLayout.vue"
 import { type messageList, useMessageStore } from "../../store/message"
 import { userAccountStore } from "../../store/account"
-import { onMounted, ref } from "vue"
+import { nextTick, onMounted, ref } from "vue"
 import { EventsOn } from "../../../wailsjs/runtime/runtime"
 import { model } from "../../../wailsjs/go/models"
 import UserAvatar from "../../components/User/UserAvatar.vue"
 import MessageView from "./MessageView.vue"
 import GroupMessageStarterVue from "./GroupMessageStarter.vue"
+import router from "../../router"
 
 const userStore = userAccountStore()
 const messageStore = useMessageStore()
@@ -26,7 +27,11 @@ const onSelectUser = (user: model.User) => {
   startGroup.value = false
   searchInput.value = ""
   messageStore.selectContact(user)
-  console.log(messageStore.messageList)
+  nextTick().then(() => {
+    if (messageView.value != undefined) {
+      messageView.value.scrollToBottom()
+    }
+  })
 }
 
 const startGroup = ref(false)
@@ -34,28 +39,43 @@ const onStartGroup = () => {
   startGroup.value = true
   userStore.updateUserList()
 }
-const onGroupStarted = () => {
+const onGroupStarted = (group: model.Group) => {
   startGroup.value = true
+  messageStore.selectContact(group)
 }
 
 const onSelectContact = (e: messageList) => {
+  console.log(e)
+
   startGroup.value = false
   if (e.user != undefined) {
     messageStore.selectContact(e.user)
   } else if (e.group != undefined) {
     messageStore.selectContact(e.group)
   }
+
+  nextTick().then(() => {
+    if (messageView.value != undefined) {
+      messageView.value.scrollToBottom()
+    }
+  })
 }
 
+const messageView = ref()
 onMounted(() => {
-  messageStore.mock()
+  if (userStore.user?.id == undefined) {
+    router.push("/login")
+  }
   messageStore.initMessageList()
   // userStore.updateUserList()
 })
 
 EventsOn("onMessage", (data: model.Message) => {
-  console.log(data)
-  messageStore.onReceiveMessage(data, GetUserById)
+  messageStore.onReceiveMessage(data, GetUserById).then(() => {
+    if (messageView.value != undefined) {
+      messageView.value.scrollToBottom()
+    }
+  })
 })
 </script>
 
@@ -128,22 +148,27 @@ EventsOn("onMessage", (data: model.Message) => {
                 </div>
                 <div
                   v-if="contact.messages && contact.messages.length > 0"
-                  class="text-xs overflow-hidden text-start"
+                  class="text-xs overflow-hidden line-clamp-2 text-start"
                   :class="contact.user.id == messageStore.receiver?.id ? 'text-systemWhite-light' : 'text-[#6f6f6f]'"
                 >
                   {{ contact.messages[contact.messages.length - 1].content }}
                 </div>
               </div>
             </div>
-            <div v-else>
-              {{ contact.group }}
+            <div v-else class="flex px-3 py-2">
+              <div class="flex -space-x-4 overflow-hidden">
+                <user-avatar
+                  class="border-2 border-labelColor-light-secondary"
+                  v-for="user in contact.group?.users"
+                  :user="user"
+                ></user-avatar>
+              </div>
             </div>
             <div class="h-[1px] ml-9 bg-labelColor-light-tertiary group-last:hidden"></div>
           </div>
         </div>
         <div class="flex-shrink-0 flex items-end justify-between pb-3 px-4">
           <div class="flex items-end p-1">
-            <!-- <user-avatar :user="userStore.user"></user-avatar> -->
             <span class="font-semibold text-textBlack-light/80 ml-1">{{ userStore.user?.name }}</span>
             <span class="ml-1 textDescription text-labelColor-light-secondary">({{ userStore.user?.id }})</span>
           </div>
@@ -157,8 +182,8 @@ EventsOn("onMessage", (data: model.Message) => {
       </div>
     </template>
     <template #main>
-      <message-view v-if="startGroup == false && messageStore.isSelected"></message-view>
-      <group-message-starter-vue v-else-if="startGroup" @done="onGroupStarted"></group-message-starter-vue>
+      <message-view ref="messageView" v-if="startGroup == false && messageStore.isSelected"></message-view>
+      <group-message-starter-vue v-else-if="startGroup" @started="onGroupStarted"></group-message-starter-vue>
     </template>
   </base-layout>
 </template>

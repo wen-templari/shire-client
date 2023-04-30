@@ -29,6 +29,7 @@ export const useMessageStore = defineStore("counter", () => {
     groupCallBack: (u: model.Group) => void
   ) => {
     if ("name" in contact) {
+      console.log("user")
       userCallBack(contact)
     } else {
       groupCallBack(contact as model.Group)
@@ -36,6 +37,8 @@ export const useMessageStore = defineStore("counter", () => {
   }
 
   const selectContact = (contact: model.User | model.Group) => {
+    receiver.value = undefined
+    group.value = undefined
     userOrGroup(
       contact,
       u => (receiver.value = u),
@@ -48,6 +51,7 @@ export const useMessageStore = defineStore("counter", () => {
   const isSelected = computed(() => {
     return receiver.value != undefined || group.value != undefined
   })
+
   const currentMessageList = computed(() => {
     if (receiver.value != undefined && receiver.value.id != undefined) {
       return messageList.value.find(v => {
@@ -58,7 +62,7 @@ export const useMessageStore = defineStore("counter", () => {
     } else if (group.value) {
       return messageList.value.find(v => {
         if (v.group != undefined) {
-          return v.group.id == group.value
+          return v.group.id == group.value?.id
         }
       })
     } else {
@@ -74,9 +78,18 @@ export const useMessageStore = defineStore("counter", () => {
     const userDataSource = async (userId: number) => {
       return userStore.userList.find(v => v.id == userId) as model.User
     }
+    const groups: number[] = []
     for (const message of messages) {
+      if (message.groupId > 0) {
+        if (groups.findIndex(v => v == message.groupId) == -1) {
+          groups.push(message.groupId)
+        }
+      }
       await onReceiveMessage(message, userDataSource)
     }
+    groups.forEach(groupId => {
+      
+    })
   }
 
   const onReceiveMessage = async (message: model.Message, userDataSource: (userId: number) => Promise<model.User>) => {
@@ -100,7 +113,6 @@ export const useMessageStore = defineStore("counter", () => {
         return v.group.id == contact.id
       }
     })
-    console.log(index)
     if (index == -1) {
       messageList.value.push({
         user: "name" in contact ? contact : undefined,
@@ -112,58 +124,6 @@ export const useMessageStore = defineStore("counter", () => {
     }
   }
 
-  const mock = () => {
-    // messageList.value = []
-    // messageList.value.push({
-    //   user: {
-    //     id: 7,
-    //     name: "Alice",
-    //     address: "addr",
-    //     port: 1234,
-    //   },
-    //   messages: [
-    //     {
-    //       from: 1,
-    //       to: 7,
-    //       content: "hello",
-    //       time: "123",
-    //       groupId: -1,
-    //     },
-    //     {
-    //       from: 7,
-    //       to: 1,
-    //       content: "hello again",
-    //       time: "123",
-    //       groupId: -1,
-    //     },
-    //   ],
-    // })
-    // messageList.value.push({
-    //   user: {
-    //     id: 9,
-    //     name: "Mando",
-    //     address: "addr",
-    //     port: 1234,
-    //   },
-    //   messages: [
-    //     {
-    //       from: 1,
-    //       to: 9,
-    //       content: "Greeting!",
-    //       time: "123",
-    //       groupId: -1,
-    //     },
-    //     {
-    //       from: 9,
-    //       to: 1,
-    //       content: "This is the way.",
-    //       time: "123",
-    //       groupId: -1,
-    //     },
-    //   ],
-    // })
-  }
-
   return {
     receiver,
     group,
@@ -173,6 +133,5 @@ export const useMessageStore = defineStore("counter", () => {
     isSelected,
     messageList,
     currentMessageList,
-    mock,
   }
 })

@@ -16,7 +16,7 @@ const userNameDisplay = computed(() => {
 })
 </script>
 <template>
-  <div v-if="userNameDisplay == '??'" class="w-9 h-9 rounded-full border-4 border-dotted border-labelColor-light-tertiary flex items-center justify-center text-labelColor-light-tertiary font-bold">?</div>
+  <div v-if="userNameDisplay == '??'" class="w-9 h-9 rounded-full border-2 border-labelColor-light-tertiary flex items-center justify-center text-labelColor-light-tertiary font-bold">?</div>
   <div
     v-else
     class="bg-gradient-to-b from-labelColor-light-secondary/80 to-labelColor-light-secondary rounded-full w-9 h-9 flex items-center justify-center font-light text-systemBackground-light select-none cursor-default"

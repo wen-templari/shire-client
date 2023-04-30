@@ -25,8 +25,10 @@ func (c *Core) ReceiveMessage(message model.Message) error {
 func (c *Core) SendMessage(message model.Message) error {
 	message.Time = time.Now().Format(time.RFC3339)
 	if message.GroupId <= 0 {
+		log.Println("one to one")
 		return c.sendOneToOneMessage(message)
 	} else {
+		log.Println("group message")
 		return c.sendGroupMessage(message)
 	}
 }
@@ -70,11 +72,19 @@ func (c *Core) sendOneToOneMessage(message model.Message) error {
 func (c *Core) sendGroupMessage(message model.Message) error {
 	// find group's wrapper
 	w, ok := c.wrappers[message.GroupId]
+
 	if !ok {
-		log.Printf("wrapper not found for group %v", message.GroupId)
-		return fmt.Errorf("wrapper not found for group %v", message.GroupId)
+		_, err := c.SetupGroup(message.GroupId)
+		if err != nil {
+			log.Printf("wrapper not found for group %v", message.GroupId)
+			return fmt.Errorf("wrapper not found for group %v", message.GroupId)
+		}
 	}
-	s, _ := json.Marshal(message)
+
+	s, err := json.Marshal(message)
+	if err != nil {
+		return err
+	}
 	w.client.Append(strconv.Itoa(message.GroupId), string(s))
 
 	log.Printf("%v: Sending message: %v", c.user.Id, message)

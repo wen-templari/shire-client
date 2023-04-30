@@ -70,6 +70,9 @@ func SaveMessage(message *model.Message) error {
 
 func GetAllMessage() ([]model.Message, error) {
 	messageList := []model.Message{}
+	if db == nil {
+		return messageList, fmt.Errorf("db not init")
+	}
 	sql, _, _ := squirrel.Select("*").From("message").ToSql()
 	if err := db.Select(&messageList, sql); err != nil {
 		return []model.Message{}, err

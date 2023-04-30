@@ -3,6 +3,7 @@ import { model } from "../../../wailsjs/go/models"
 import { computed, onMounted, ref } from "vue"
 import UserAvatar from "../../components/User/UserAvatar.vue"
 import { userAccountStore } from "../../store/account"
+import { CreateGroup } from "../../../wailsjs/go/main/App"
 
 const groupUserList = ref<model.User[]>([])
 const userStore = userAccountStore()
@@ -32,7 +33,16 @@ onMounted(() => {
   groupUserList.value.push(userStore.user as model.User)
 })
 
-const startGroup = () => {}
+const emits = defineEmits<{
+  (name: "started", value: model.Group): void
+}>()
+
+const startGroup = () => {
+  CreateGroup(groupUserList.value.map(user => user.id as number)).then(res => {
+    emits("started", res)
+    console.log(res)
+  })
+}
 </script>
 <template>
   <div class="flex flex-col items-center justify-center h-full">
@@ -73,7 +83,6 @@ const startGroup = () => {}
     >
       开始
     </button>
-
     <!-- :class="groupUserList.length < 3 ? 'bg-labelColor-light-tertiary text-labelColor-light-secondary' : 'cursor-pointer'" -->
   </div>
 </template>

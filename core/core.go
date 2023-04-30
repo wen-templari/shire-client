@@ -22,6 +22,13 @@ type Core struct {
 	wrappers map[int]*RaftWrapper
 }
 
+func (c *Core) Logout() {
+	c.user = model.User{}
+	c.token = ""
+	c.subscribers = make([]chan model.Message, 0)
+	c.wrappers = make(map[int]*RaftWrapper)
+}
+
 func MakeCore(address string) *Core {
 	return &Core{
 		InfoServerAddress: address,

@@ -17,28 +17,45 @@ const sendMessage = () => {
   const message: model.Message = {
     from: userStore.user?.id as number,
     to: messageStore.receiver?.id as number,
+    groupId: messageStore.group == undefined ? -1 : (messageStore.group.id as number),
     content: input.value,
     time: new Date().toISOString(),
-    groupId: -1,
   }
   // ReceiveMessage(message)
   SendMessage(message)
   input.value = ""
 }
+
+const scrollToBottom = () => {
+  var bottom = document.getElementById("messageWindowBottom")
+  bottom?.scrollIntoView({ behavior: "smooth" })
+}
+defineExpose({ scrollToBottom })
 </script>
 <template>
-  <div class="h-14 bg-fillColor-light-teritary opacity-60 flex items-center px-4 border-b border-labelColor-light-tertiary text-sm">
+  <div
+    class="h-14 shrink-0 bg-fillColor-light-teritary opacity-60 flex items-center px-4 border-b border-labelColor-light-tertiary text-sm"
+  >
     <div>收件人：</div>
-    <span class="font-semibold ml-1">{{ messageStore.receiver?.name }}</span>
-    <span class="ml-1 textDescription text-labelColor-light-secondary">({{ messageStore.receiver?.id }})</span>
+    <div v-if="messageStore.receiver != undefined">
+      <span class="font-semibold ml-1">{{ messageStore.receiver?.name }}</span>
+      <span class="ml-1 textDescription text-labelColor-light-secondary">({{ messageStore.receiver?.id }})</span>
+    </div>
+    <div v-if="messageStore.group != undefined" class="flex">
+      <div v-for="user in messageStore.group.users" class="">
+        <span class="font-semibold ml-1">{{ user.name }}</span>
+        <span class="ml-1 textDescription text-labelColor-light-secondary">({{ user.id }})</span>
+      </div>
+    </div>
   </div>
   <div id="messageWindow" class="flex-grow flex flex-col px-4 py-3 overflow-auto">
     <div>
       <div v-for="item in messageStore.currentMessageList?.messages">
         <div class="relative flex my-2 gap-2" :class="[item?.from == userStore.user?.id ? 'flex-row-reverse ' : '']">
-          <user-avatar :user="item.from == userStore.user?.id ? userStore.user : messageStore.receiver"></user-avatar>
+          <user-avatar :user="userStore.userList.find(u => u.id == item.from)"></user-avatar>
           <div
-            class="py-2 px-2 text-sm rounded max-w-40"
+            class="py-2 px-2 text-sm rounded text-start"
+            style="max-width: 260px"
             :class="[
               item.from == userStore.user?.id
                 ? 'bg-systemGreen-light text-systemWhite-light'
@@ -61,4 +78,5 @@ const sendMessage = () => {
       @keypress.enter="sendMessage"
     />
   </div>
+  <div></div>
 </template>

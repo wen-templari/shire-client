@@ -8,6 +8,8 @@ export function GetGroupById(arg1:number):Promise<model.Group>;
 
 export function GetMessages():Promise<Array<model.Message>>;
 
+export function GetSelf():Promise<model.User>;
+
 export function GetUserById(arg1:number):Promise<model.User>;
 
 export function GetUsers():Promise<Array<model.User>>;
@@ -15,6 +17,8 @@ export function GetUsers():Promise<Array<model.User>>;
 export function Greet(arg1:string):Promise<string>;
 
 export function Login(arg1:number,arg2:string):Promise<model.User>;
+
+export function Logout():Promise<void>;
 
 export function Ping():Promise<string>;
 

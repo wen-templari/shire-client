@@ -16,7 +16,7 @@ const router = createRouter({
 })
 router.beforeEach((to, from, next) => {
   const store = userAccountStore()
-  if (store.user != undefined) {
+  if (store.user?.id != undefined) {
     // login
     if (to.path === "/login") {
       next({ path: "/" })
