@@ -2,10 +2,9 @@
 
 ## TODO
 
-- [ ] info server
+- [x] info server
   - [x] API
   - [x] database
-  - [ ] CI/CD
 - [x] project overall structure
   - [x] core package
   - [x] diagram
@@ -13,12 +12,12 @@
 - [x] group message 
   - [x] start raft
   - [x] watch message change
-- [ ] add presistence
-- [ ] frontend imporvement
-  - [ ] search user
+- [x] add presistence
+- [x] frontend imporvement
+  - [x] search user
   - [x] fetch data from App
-  - [ ] group create
-  - [ ] UI imporvement
+  - [x] group create
+  - [x] UI imporvement
 - [ ] configeration pannel
 - [ ] CI/CD
 - [ ] testing
