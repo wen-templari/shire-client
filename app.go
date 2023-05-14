@@ -4,10 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/joho/godotenv"
 	"github.com/templari/shire-client/core"
 	"github.com/templari/shire-client/model"
-	"github.com/templari/shire-client/util"
 )
 
 // App struct
@@ -37,9 +35,9 @@ func NewApp() *App {
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 
-	if err := godotenv.Load(); err != nil {
-		util.Logger.Fatal("Error loading .env file")
-	}
+	// if err := godotenv.Load(); err != nil {
+	// 	util.Logger.Fatal("Error loading .env file")
+	// }
 
 	go a.messageUpdateHandler()
 
