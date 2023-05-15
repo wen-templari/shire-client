@@ -31,62 +31,13 @@ type Host struct {
 	bucket   int
 }
 
-func TestStartHostGroup(t *testing.T) {
-	hostGroup := make([]*Host, 0)
-	mando := &Host{
-		name:     "mando",
-		id:       2,
-		password: "12345",
-		replies: []string{
-			"This is the way.", "I have spoken",
-			"I can bring you in warm, or I can bring you in cold.",
-			"I like those odds.",
-			"… Bounty hunting is a complicated profession.",
-			"I’m a Mandalorian. Weapons are part of my religion.",
-			"Stop touching things.",
-			"Wherever I go, he goes",
-			"Dank farrik.",
-			"I’ll see you again. I promise.",
-		},
-		speed: 1,
-	}
-	hostGroup = append(hostGroup, mando)
-	vader := &Host{
-		name:     "vader",
-		id:       3,
-		password: "12345",
-		replies: []string{
-			"He’s as clumsy as he is stupid.",
-			"You don’t know the power of the dark side!",
-			"It will soon see the end of the rebellion.",
-			"I am altering the deal. Pray I don’t alter it any further.",
-			"Be careful not to choke on your aspirations.",
-			"You have controlled your fear. Now, release your anger. only your hatred can destroy me.",
-			"When I left you, I was but the learner. Now I am the master.",
-			"Don’t be too proud of this technological terror you’ve constructed. The ability to destroy a planet is insignificant next to the power of the force.",
-			"I find your lack of faith disturbing.",
-			"Anakin Skywalker was weak. I destroyed him.",
-			"Apology accepted.",
-		},
-		speed: 1,
-	}
-	hostGroup = append(hostGroup, vader)
-	for _, v := range hostGroup {
-		v.start()
-	}
-
-	for {
-
-	}
-}
-
 func (h *Host) start() error {
 	c := core.MakeCore(infoServerAddr)
 
 	if _, err := c.Login(h.id, h.password); err != nil {
 		return err
 	}
-	ticker := time.NewTicker(5 * time.Second)
+	ticker := time.NewTicker(10 * time.Second)
 	quit := make(chan struct{})
 	go func() {
 		for {
@@ -138,48 +89,54 @@ func (h *Host) start() error {
 	}(h, messageChan)
 	return nil
 }
+func TestHostGroup(t *testing.T) {
+	hostGroup := make([]*Host, 0)
+	mando := &Host{
+		name:     "mando",
+		id:       2,
+		password: "12345",
+		replies: []string{
+			"This is the way.", "I have spoken",
+			"I can bring you in warm, or I can bring you in cold.",
+			"I like those odds.",
+			"… Bounty hunting is a complicated profession.",
+			"I’m a Mandalorian. Weapons are part of my religion.",
+			"Stop touching things.",
+			"Wherever I go, he goes",
+			"Dank farrik.",
+			"I’ll see you again. I promise.",
+		},
+		speed: 1,
+	}
+	hostGroup = append(hostGroup, mando)
+	vader := &Host{
+		name:     "vader",
+		id:       3,
+		password: "12345",
+		replies: []string{
+			"He’s as clumsy as he is stupid.",
+			"You don’t know the power of the dark side!",
+			"It will soon see the end of the rebellion.",
+			"I am altering the deal. Pray I don’t alter it any further.",
+			"Be careful not to choke on your aspirations.",
+			"You have controlled your fear. Now, release your anger. only your hatred can destroy me.",
+			"When I left you, I was but the learner. Now I am the master.",
+			"Don’t be too proud of this technological terror you’ve constructed. The ability to destroy a planet is insignificant next to the power of the force.",
+			"I find your lack of faith disturbing.",
+			"Anakin Skywalker was weak. I destroyed him.",
+			"Apology accepted.",
+		},
+		speed: 1,
+	}
+	hostGroup = append(hostGroup, vader)
+	for _, v := range hostGroup {
+		v.start()
+	}
 
-// func TestStartMandoServer(t *testing.T) {
-// 	mando := core.MakeCore(infoServerAddr)
+	for {
 
-// 	if _, err := mando.Login(2, "12345"); err != nil {
-// 		t.Error(err)
-// 	}
-// 	replies := []string{"This is the way.", "I have spoken",
-// 		"I can bring you in warm, or I can bring you in cold.",
-// 		"I like those odds.",
-// 		"… Bounty hunting is a complicated profession.",
-// 		"I’m a Mandalorian. Weapons are part of my religion.",
-// 		"Stop touching things.",
-// 		"Wherever I go, he goes",
-// 		"Dank farrik.",
-// 		"I’ll see you again. I promise."}
-// 	messageChan := make(chan model.Message, 10)
-// 	mando.Subscribe(messageChan)
-// 	for {
-// 		message := <-messageChan
-// 		var toWhomShouldIReply int
-// 		// TODO when is group
-// 		if message.From == mando.GetUser().Id {
-// 			continue
-// 		} else {
-// 			toWhomShouldIReply = message.From
-// 		}
-// 		msg := model.Message{
-// 			From:    mando.GetUser().Id,
-// 			To:      toWhomShouldIReply,
-// 			Content: replies[rand.Intn(len(replies))],
-// 		}
-// 		// rand.Seed(time.Now().Unix()) // initialize global pseudo random generator
-// 		// time.Sleep(1000 * time.Microsecond)
-// 		err := mando.SendMessage(msg)
-// 		if err != nil {
-// 			log.Println(err)
-// 		}
-
-// 	}
-
-// }
+	}
+}
 
 func TestSendMessage(t *testing.T) {
 	bob := core.MakeCore(infoServerAddr)

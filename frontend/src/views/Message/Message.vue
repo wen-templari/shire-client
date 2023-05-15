@@ -5,7 +5,7 @@ import BaseLayout from "../../layout/BaseLayout.vue"
 import { type messageList, useMessageStore } from "../../store/message"
 import { userAccountStore } from "../../store/account"
 import { nextTick, onMounted, ref } from "vue"
-import { EventsOn } from "../../../wailsjs/runtime/runtime"
+import { EventsOn, LogTrace } from "../../../wailsjs/runtime/runtime"
 import { model } from "../../../wailsjs/go/models"
 import UserAvatar from "../../components/User/UserAvatar.vue"
 import MessageView from "./MessageView.vue"
@@ -71,11 +71,16 @@ onMounted(() => {
 })
 
 EventsOn("onMessage", (data: model.Message) => {
-  messageStore.onReceiveMessage(data, GetUserById).then(() => {
-    if (messageView.value != undefined) {
-      messageView.value.scrollToBottom()
-    }
-  })
+  messageStore
+    .onReceiveMessage(data, GetUserById)
+    .then(() => {
+      if (messageView.value != undefined) {
+        messageView.value.scrollToBottom()
+      }
+    })
+    .catch(err => {
+      LogTrace(err)
+    })
 })
 </script>
 

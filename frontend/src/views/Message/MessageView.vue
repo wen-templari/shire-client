@@ -10,7 +10,8 @@ const userStore = userAccountStore()
 const messageStore = useMessageStore()
 
 const input = ref("")
-const sendMessage = () => {
+const errorFlag = ref(false)
+const sendMessage = async () => {
   if (input.value == "") {
     return
   }
@@ -22,8 +23,17 @@ const sendMessage = () => {
     time: new Date().toISOString(),
   }
   // ReceiveMessage(message)
-  SendMessage(message)
-  input.value = ""
+  try {
+    await SendMessage(message)
+    input.value = ""
+    errorFlag.value = false
+  } catch (error) {
+    errorFlag.value = true
+    setTimeout(() => {
+      errorFlag.value = false
+    }, 3000)
+    console.log(error)
+  }
 }
 
 const scrollToBottom = () => {
@@ -69,7 +79,10 @@ defineExpose({ scrollToBottom })
     </div>
     <div id="messageWindowBottom"></div>
   </div>
-  <div class="h-12 flex items-center px-4 gap-4">
+  <div class="h-12 flex items-center px-4 gap-4 relative">
+    <transition>
+      <div class="absolute left-0 -top-3 px-4 text-sm text-systemRed-light" v-if="errorFlag">发送失败！对方可能不在线。</div>
+    </transition>
     <input
       type="text"
       v-model="input"
@@ -80,3 +93,15 @@ defineExpose({ scrollToBottom })
   </div>
   <div></div>
 </template>
+
+<style>
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+</style>

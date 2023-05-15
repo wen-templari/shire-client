@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import LayoutBase from "@/layout/LayoutBase.vue"
 import InputBase from "@/components/Input/InputBase.vue"
 import { ref } from "@vue/reactivity"
 import { GetSelf, Login, Register } from "../../wailsjs/go/main/App"

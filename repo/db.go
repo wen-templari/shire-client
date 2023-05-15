@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
@@ -17,11 +18,19 @@ var db *sqlx.DB
 
 func InitDB(id int) {
 	var err error
-	db, err = sqlx.Connect("sqlite3", fmt.Sprint("shire", id, ".db?cache=shared&mode=rwc"))
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Println(err)
+	}
+	os.MkdirAll(homeDir+"/.shire", os.ModePerm)
+	dbPath := fmt.Sprint(homeDir, "/.shire/", id, ".db?cache=shared&mode=rwc")
+	db, err = sqlx.Open("sqlite3", dbPath)
+	// db, err = sqlx.Connect("sqlite3", fmt.Sprint("shire", id, ".db?cache=shared&mode=rwc"))
 	if err != nil {
 		log.Println(err)
 		util.Logger.Fatal(err)
 	}
+	fmt.Print("Persisting data to ", dbPath, "\n")
 	_, err = createTable()
 	log.Println(err)
 	// db.SetMaxOpenConns(1000) // The default is 0 (unlimited)
