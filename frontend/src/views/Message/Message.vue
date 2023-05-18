@@ -39,8 +39,9 @@ const onStartGroup = () => {
   startGroup.value = true
   userStore.updateUserList()
 }
+
 const onGroupStarted = (group: model.Group) => {
-  startGroup.value = true
+  startGroup.value = false
   messageStore.selectContact(group)
 }
 
@@ -135,8 +136,8 @@ EventsOn("onMessage", (data: model.Message) => {
             >
               <user-avatar class="shrink-0" :user="contact.user"></user-avatar>
               <div class="ml-3 text-sm flex flex-col items-start flex-grow h-12">
-                <div class="flex justify-between w-full">
-                  <div class="text-sm">
+                <div class="flex justify-between w-full text-sm">
+                  <div class="">
                     <span class="">{{ contact.user.name }}</span>
                     <span
                       :class="contact.user.id == messageStore.receiver?.id ? 'text-systemWhite-light' : 'text-labelColor-light-secondary'"
@@ -146,6 +147,7 @@ EventsOn("onMessage", (data: model.Message) => {
                   </div>
                   <div
                     v-if="contact.messages && contact.messages.length > 0"
+                    class=""
                     :class="contact.user.id == messageStore.receiver?.id ? 'text-systemWhite-light' : 'text-labelColor-light-secondary'"
                   >
                     {{ new Date(Date.parse(contact.messages[contact.messages.length - 1].time)).toLocaleDateString() }}
@@ -160,13 +162,40 @@ EventsOn("onMessage", (data: model.Message) => {
                 </div>
               </div>
             </div>
-            <div v-else class="flex px-3 py-2">
-              <div class="flex -space-x-4 overflow-hidden">
+            <div
+              v-else
+              class="flex items-center px-3 py-2 rounded-[6px]"
+              :class="{ 'bg-systemBlue-light text-systemWhite-light': contact.group?.id == messageStore.group?.id }"
+            >
+              <!-- <div class="flex items-center -space-x-4 overflow-hidden">
                 <user-avatar
-                  class="border-2 border-labelColor-light-secondary"
+                  class="border-2 border-labelColor-light-secondary bg-labelColor-light-tertiary flex-shrink-0"
                   v-for="user in contact.group?.users"
                   :user="user"
                 ></user-avatar>
+              </div> -->
+              <div class="text-sm flex flex-col items-start flex-grow h-12">
+                <div class="flex justify-between w-full text-sm">
+                  <div class="text-sm">
+                    <span v-for="user in contact.group?.users" class="group/item">
+                      <span>{{ user.name }}</span>
+                      <span class="group-last/item:hidden">,</span>
+                    </span>
+                  </div>
+                  <div
+                    v-if="contact.messages && contact.messages.length > 0"
+                    :class="contact.group?.id == messageStore.group?.id ? 'text-systemWhite-light' : 'text-labelColor-light-secondary'"
+                  >
+                    {{ new Date(Date.parse(contact.messages[contact.messages.length - 1].time)).toLocaleDateString() }}
+                  </div>
+                </div>
+                <div
+                  v-if="contact.messages && contact.messages.length > 0"
+                  class="text-xs overflow-hidden line-clamp-2 text-start"
+                  :class="contact.group?.id == messageStore.group?.id ? 'text-systemWhite-light' : 'text-[#6f6f6f]'"
+                >
+                  {{ contact.messages[contact.messages.length - 1].content }}
+                </div>
               </div>
             </div>
             <div class="h-[1px] ml-9 bg-labelColor-light-tertiary group-last:hidden"></div>

@@ -17,7 +17,6 @@ func (c *Core) ReceiveMessage(message model.Message) error {
 	log.Printf("%v: Received message: %v", c.user.Id, message)
 	for _, ch := range c.subscribers {
 		ch <- message
-		log.Println(len(c.subscribers))
 	}
 	return nil
 }
@@ -25,10 +24,8 @@ func (c *Core) ReceiveMessage(message model.Message) error {
 func (c *Core) SendMessage(message model.Message) error {
 	message.Time = time.Now().Format(time.RFC3339)
 	if message.GroupId <= 0 {
-		log.Println("one to one")
 		return c.sendOneToOneMessage(message)
 	} else {
-		log.Println("group message")
 		return c.sendGroupMessage(message)
 	}
 }

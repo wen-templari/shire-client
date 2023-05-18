@@ -58,21 +58,26 @@ defineExpose({ scrollToBottom })
       </div>
     </div>
   </div>
-  <div id="messageWindow" class="flex-grow flex flex-col px-4 py-3 overflow-auto">
+  <div id="messageyWindow" class="flex-grow flex flex-col px-4 py-3 overflow-auto">
     <div>
       <div v-for="item in messageStore.currentMessageList?.messages">
-        <div class="relative flex my-2 gap-2" :class="[item?.from == userStore.user?.id ? 'flex-row-reverse ' : '']">
-          <user-avatar :user="userStore.userList.find(u => u.id == item.from)"></user-avatar>
-          <div
-            class="py-2 px-2 text-sm rounded text-start"
-            style="max-width: 260px"
-            :class="[
-              item.from == userStore.user?.id
-                ? 'bg-systemGreen-light text-systemWhite-light'
-                : 'bg-fillColor-light-teritary text-textBlack-light',
-            ]"
-          >
-            {{ item.content }}
+        <div class="relative flex mb-4 gap-2" :class="[item?.from == userStore.user?.id ? 'flex-row-reverse ' : '']">
+          <user-avatar :user="userStore.userList.find(u => u.id == item.from)" class="mt-4"></user-avatar>
+          <div>
+            <div class="text-xs text-labelColor-light-secondary text-left pl-2">
+              {{ userStore.userList.find(u => u.id == item.from)?.name }}
+            </div>
+            <div
+              class="py-2 px-2 text-sm rounded text-start"
+              style="max-width: 260px"
+              :class="[
+                item.from == userStore.user?.id
+                  ? 'bg-systemGreen-light text-systemWhite-light'
+                  : 'bg-fillColor-light-teritary text-textBlack-light',
+              ]"
+            >
+              {{ item.content }}
+            </div>
           </div>
         </div>
       </div>

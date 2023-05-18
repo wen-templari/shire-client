@@ -44,7 +44,7 @@ func (h *Host) start() error {
 			select {
 			case <-ticker.C:
 				h.mu.Lock()
-				if h.bucket < 3 {
+				if h.bucket < 2 {
 					h.bucket++
 				}
 				h.mu.Unlock()
