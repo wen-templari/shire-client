@@ -84,7 +84,7 @@ defineExpose({ scrollToBottom })
     </div>
     <div id="messageWindowBottom"></div>
   </div>
-  <div class="h-12 flex items-center px-4 gap-4 relative">
+  <div class="h-12 flex items-center px-4 gap-4 relative flex-shrink-0">
     <transition>
       <div class="absolute left-0 -top-3 px-4 text-sm text-systemRed-light" v-if="errorFlag">发送失败！对方可能不在线。</div>
     </transition>
