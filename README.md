@@ -12,14 +12,14 @@
 - [x] group message 
   - [x] start raft
   - [x] watch message change
-- [x] add presistence
-- [x] frontend imporvement
+- [x] add persistence
+- [x] frontend improvement
   - [x] search user
   - [x] fetch data from App
   - [x] group create
-  - [x] UI imporvement
-- [ ] configeration pannel
-- [ ] CI/CD
+  - [x] UI improvement
+- [ ] configuration panel
+- [x] CI/CD
 - [ ] testing
 - [ ] documentation
 
@@ -36,14 +36,14 @@ wails dev
 wails build
 ```
 
-## Implimentation Detail
+## Implementation Detail
 
 ### Project Structure
 TODO
 
-### Message Transimit
+### Message Transmit
 
-All message transimit is handled by the package `github.com/templari/shire-client/core`. The message handling process is mainly done by `Core.SendMessage` and `Core.ReceiveMessage`, `Core.Subscribe` is provided for subscirbing to all messages goes through the package.
+All message transmit is handled by the package `github.com/templari/shire-client/core`. The message handling process is mainly done by `Core.SendMessage` and `Core.ReceiveMessage`, `Core.Subscribe` is provided for subscribing to all messages goes through the package.
 
 #### One to one
 
@@ -82,7 +82,7 @@ Assume a user called Alice want to send message to Bob.
    }
    ```
 
-3. After Bob received the request, Bob will then response to Alice with a OK status code. Then both Alice and Bob will pass the message to all subscirbers.
+3. After Bob received the request, Bob will then response to Alice with a OK status code. Then both Alice and Bob will pass the message to all subscribers.
    
 
 #### Group
@@ -109,7 +109,7 @@ Assume a user called Alice want to have a group another 2 members, Bob and Charl
       }
     ]
     ```
-   The response will contains a unqiue group id.
+   The response will contains a unique group id.
    ```
    {
      "groupUsers": [
@@ -160,12 +160,12 @@ Assume a user called Alice want to have a group another 2 members, Bob and Charl
     }
     ```
 
-    3.5 When a member received the request, say Bob, Bob will then start the raft. As for the orgizinizor of the group, Alice will start the raft when 3.4 is done.
+    3.5 When a member received the request, say Bob, Bob will then start the raft. As for the organizer of the group, Alice will start the raft when 3.4 is done.
 
     ```go
 
     // todo
     ```
 
-    Till now, all member of the group has started the raft and is ready to transimit message.
+    Till now, all member of the group has started the raft and is ready to transmit message.
     
